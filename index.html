@@ -78,7 +78,7 @@ header.scrolled{background:rgba(246,250,248,.85);backdrop-filter:blur(14px);bord
 .ms-item.on{background:rgba(255,255,255,.12);color:#fff;font-weight:600}
 .ms-item i{width:15px;height:15px;border-radius:4px;background:rgba(255,255,255,.25);display:inline-block}
 .ms-item.on i{background:var(--grad)}
-.mock-main{padding:20px;background:var(--bg)}
+.mock-main{padding:20px;background:var(--bg);text-align:left}
 .mk-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .mk-h h4{font-size:15px}
 .mk-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
@@ -126,6 +126,30 @@ header.scrolled{background:rgba(246,250,248,.85);backdrop-filter:blur(14px);bord
 .mk-brow .bb{height:18px;border-radius:5px;background:var(--green2);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;padding:0 7px}
 .mk-brow.hot .bb{background:#E8963E}
 .mk-brow .bn{font-size:9px;color:#A16207;font-weight:700}
+/* roller screen */
+.mk-chips{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 11px}
+.mk-chip2{font-size:9px;font-weight:600;padding:3px 9px;border-radius:99px;background:#E7F2ED;color:var(--green)}
+.mk-chip2.blue{background:#EAF1FE;color:#2563EB}
+.mk-flabel{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted2);margin-bottom:1px}
+.mk-meta2{display:flex;gap:20px;font-size:10px;margin-bottom:11px}
+.mk-meta2 .k{color:var(--muted2);font-size:9px}
+.mk-meta2 b{display:block;font-size:11.5px}
+/* feedback screen */
+.mk-audio{display:flex;align-items:center;gap:9px;background:var(--ink);color:#fff;border-radius:9px;padding:8px 11px;font-size:10px;margin-bottom:10px}
+.mk-audio .play{width:22px;height:22px;border-radius:50%;background:#fff;color:var(--ink);display:grid;place-items:center;font-size:8px;flex-shrink:0}
+.mk-audio .abar{flex:1;height:4px;background:rgba(255,255,255,.22);border-radius:99px;overflow:hidden}
+.mk-audio .abar i{display:block;height:100%;width:38%;background:var(--mint)}
+.mk-sc{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.mk-sc-row{display:flex;align-items:center;gap:8px;font-size:10.5px;padding:2.5px 0}
+.mk-sc-row .scn{flex:1}
+.mk-dots{display:flex;gap:3px}
+.mk-dot{width:8px;height:8px;border-radius:50%;background:#E4E9E6}
+.mk-dot.on{background:var(--green)}
+.mk-quote{margin-top:7px;font-size:9.5px;font-style:italic;color:#3E4E46;background:var(--bg);border-radius:7px;padding:6px 8px}
+.mk-fbstrip{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.mk-fb{border-radius:8px;padding:7px 9px;font-size:9px;font-weight:600}
+.mk-fb.a{background:#FBF6F1;border:1px dashed #E5CDB4;color:#8A6A48}
+.mk-fb.b{background:#EAF4EF;border:1px solid #BFDACC;color:var(--green)}
 
 /* ---------- Section base ---------- */
 section{padding:84px 0}
@@ -324,8 +348,10 @@ footer{padding:56px 0 40px}
           <div class="ms-brand"><i></i> Process.io</div>
           <div class="ms-item on" data-scr="oversikt" onclick="mkScreen(this)"><i></i> Översikt</div>
           <div class="ms-item" data-scr="planering" onclick="mkScreen(this)"><i></i> Planering</div>
+          <div class="ms-item" data-scr="roller" onclick="mkScreen(this)"><i></i> Roller</div>
           <div class="ms-item" data-scr="sourcing" onclick="mkScreen(this)"><i></i> AI-sourcing</div>
           <div class="ms-item" data-scr="kandidater" onclick="mkScreen(this)"><i></i> Kandidater</div>
+          <div class="ms-item" data-scr="feedback" onclick="mkScreen(this)"><i></i> Feedback</div>
           <div class="ms-item" data-scr="analys" onclick="mkScreen(this)"><i></i> Analys</div>
         </div>
         <div class="mock-main">
@@ -365,6 +391,17 @@ footer{padding:56px 0 40px}
             <div style="margin-top:10px;font-size:9.5px;color:var(--green);font-weight:700;background:#EAF4EF;border-radius:8px;padding:6px 9px">✦ Importerat från Excel — budget & prognos räknas live mot pipelinen</div>
           </div>
 
+          <!-- Roller -->
+          <div class="mk-screen" id="mk-roller">
+            <div class="mk-h"><h4>Roller — Backend-utvecklare</h4><span style="font-size:11px;color:var(--muted2)">Marcus Öhrn</span></div>
+            <div class="mk-flabel">Must-have-kompetenser</div>
+            <div class="mk-chips"><span class="mk-chip2">TypeScript</span><span class="mk-chip2">Node.js</span><span class="mk-chip2">SQL & datamodellering</span><span class="mk-chip2">CI/CD</span><span class="mk-chip2">3+ års erfarenhet</span></div>
+            <div class="mk-flabel">Meriterande</div>
+            <div class="mk-chips"><span class="mk-chip2 blue">AWS</span><span class="mk-chip2 blue">Kubernetes</span><span class="mk-chip2 blue">GraphQL</span></div>
+            <div class="mk-meta2"><span><span class="k">Lönespann</span><b>52 000 – 62 000 kr</b></span><span><span class="k">Startdatum</span><b>2026-09-01</b></span></div>
+            <div style="font-size:9.5px;color:var(--green);font-weight:700;background:#EAF4EF;border-radius:8px;padding:6px 9px">✓ Kravprofilen är komplett och låst — alla bedömningar mäts mot denna</div>
+          </div>
+
           <!-- AI-sourcing -->
           <div class="mk-screen" id="mk-sourcing">
             <div class="mk-h"><h4>AI-sourcing</h4><span style="font-size:11px;color:var(--muted2)">3 träffar</span></div>
@@ -389,6 +426,20 @@ footer{padding:56px 0 40px}
               <div class="mk-col"><div class="ch">Erbjudande <span>1</span></div>
                 <div class="mk-card mk-drag"><div class="n">Johan Ek</div><div class="m"><span class="mk-score">★ 4,5</span></div></div></div>
             </div>
+          </div>
+
+          <!-- Feedback -->
+          <div class="mk-screen" id="mk-feedback">
+            <div class="mk-h"><h4>Feedback — Johan Ek</h4><span style="font-size:11px;color:var(--muted2)">Teknisk intervju · svar på 4 tim</span></div>
+            <div class="mk-audio"><span class="play">▶</span><span>🎤 Röstmemo 0:42</span><span class="abar"><i></i></span><span>→ scorecard</span></div>
+            <div class="mk-sc">
+              <div class="mk-sc-row"><span class="scn">TypeScript/Node.js</span><span class="mk-dots"><i class="mk-dot on"></i><i class="mk-dot on"></i><i class="mk-dot on"></i><i class="mk-dot on"></i><i class="mk-dot on"></i></span></div>
+              <div class="mk-sc-row"><span class="scn">Systemdesign</span><span class="mk-dots"><i class="mk-dot on"></i><i class="mk-dot on"></i><i class="mk-dot on"></i><i class="mk-dot on"></i><i class="mk-dot on"></i></span></div>
+              <div class="mk-sc-row"><span class="scn">SQL & datamodellering</span><span class="mk-dots"><i class="mk-dot on"></i><i class="mk-dot on"></i><i class="mk-dot on"></i><i class="mk-dot on"></i><i class="mk-dot"></i></span></div>
+              <div class="mk-sc-row"><span class="scn">Samarbete & kommunikation</span><span class="mk-dots"><i class="mk-dot on"></i><i class="mk-dot on"></i><i class="mk-dot on"></i><i class="mk-dot on"></i><i class="mk-dot"></i></span></div>
+              <div class="mk-quote">”Stark på systemdesign, lite tunn på SQL-optimering men lär sig snabbt — klart godkänd för slutintervju.”</div>
+            </div>
+            <div class="mk-fbstrip"><div class="mk-fb a">✗ Förr: 3 dagar, bortglömt i Slack</div><div class="mk-fb b">✓ Nu: 4 tim, strukturerat & sparat</div></div>
           </div>
 
           <!-- Analys -->
