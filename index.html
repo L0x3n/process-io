@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Process.io — Hela rekryteringen. Ett flöde.</title>
+<meta name="description" content="Process.io är rekryterings-OS:et som förenar workforce planning, AI-sourcing, pipeline och beslut i ett enda flöde. Slut på Excel och tappade kandidater." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#08221A; --deep:#0E3527; --green:#1F5C46; --green2:#2E7A5D;
+  --mint:#34D399; --teal:#2DD4BF; --lime:#A3E635;
+  --bg:#F6FAF8; --card:#FFFFFF; --line:#E4EDE8;
+  --text:#0D1A14; --muted:#5C6E65; --muted2:#8A998F;
+  --radius:18px; --shadow:0 1px 2px rgba(8,34,26,.05),0 12px 40px rgba(8,34,26,.06);
+  --shadow-lg:0 30px 80px rgba(8,34,26,.18);
+  --grad:linear-gradient(120deg,#34D399,#2DD4BF 55%,#22B8C9);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:15px;padding:12px 22px;border-radius:12px;border:1px solid transparent;cursor:pointer;transition:.2s;white-space:nowrap}
+.btn-primary{background:var(--ink);color:#fff}
+.btn-primary:hover{background:var(--deep);transform:translateY(-1px)}
+.btn-accent{background:var(--grad);color:#06251C;font-weight:700;box-shadow:0 8px 24px rgba(45,212,191,.35)}
+.btn-accent:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(45,212,191,.45)}
+.btn-ghost{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.18)}
+.btn-ghost:hover{background:rgba(255,255,255,.16)}
+.btn-light{background:#fff;color:var(--ink);border-color:var(--line)}
+.btn-light:hover{border-color:var(--green2);transform:translateY(-1px)}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--green2)}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:6px 13px;border-radius:999px;font-size:13px;font-weight:600}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ---------- Nav ---------- */
+header{position:sticky;top:0;z-index:100;transition:.3s}
+header.scrolled{background:rgba(246,250,248,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:70px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px;letter-spacing:-.02em}
+.logo{width:34px;height:34px;border-radius:10px;background:var(--grad);display:grid;place-items:center;position:relative;box-shadow:0 6px 18px rgba(45,212,191,.4)}
+.logo svg{width:19px;height:19px}
+.brand b{color:var(--ink)}.brand span{color:var(--green2)}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{font-size:15px;font-weight:500;color:var(--muted);transition:.15s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{display:flex;gap:10px;align-items:center}
+.menu-btn{display:none;background:none;border:none;font-size:24px;cursor:pointer}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;padding:72px 0 40px;text-align:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:-1;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5}
+.blob.b1{width:520px;height:520px;background:radial-gradient(circle,#5EEAD4,transparent 65%);top:-160px;left:50%;transform:translateX(-50%)}
+.blob.b2{width:360px;height:360px;background:radial-gradient(circle,#A3E635,transparent 65%);top:60px;left:8%;opacity:.28}
+.blob.b3{width:400px;height:400px;background:radial-gradient(circle,#34D399,transparent 65%);top:20px;right:5%;opacity:.3}
+.hero h1{font-size:clamp(38px,6vw,68px);font-weight:900;letter-spacing:-.035em;line-height:1.03;margin:22px 0 20px}
+.hero p.sub{font-size:clamp(17px,2.2vw,21px);color:var(--muted);max-width:620px;margin:0 auto 30px}
+.hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.hero-note{margin-top:18px;font-size:13.5px;color:var(--muted2);display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
+.hero-note span{display:inline-flex;align-items:center;gap:6px}
+.check{color:var(--teal);font-weight:800}
+
+/* product mockup */
+.mock{max-width:1000px;margin:52px auto 0;border-radius:20px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-lg);overflow:hidden;position:relative}
+.mock-bar{height:40px;background:linear-gradient(#fff,#F3F8F5);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:7px;padding:0 15px}
+.dot{width:11px;height:11px;border-radius:50%}
+.mock-body{display:grid;grid-template-columns:190px 1fr;min-height:340px}
+.mock-side{background:var(--ink);padding:16px 12px;display:flex;flex-direction:column;gap:5px}
+.mock-side .ms-brand{color:#fff;font-weight:800;font-size:14px;padding:4px 8px 14px;display:flex;gap:8px;align-items:center}
+.mock-side .ms-brand i{width:22px;height:22px;border-radius:7px;background:var(--grad);display:inline-block}
+.ms-item{color:#B9CBC2;font-size:12.5px;padding:8px 10px;border-radius:8px;display:flex;align-items:center;gap:9px}
+.ms-item.on{background:rgba(255,255,255,.12);color:#fff;font-weight:600}
+.ms-item i{width:15px;height:15px;border-radius:4px;background:rgba(255,255,255,.25);display:inline-block}
+.ms-item.on i{background:var(--grad)}
+.mock-main{padding:20px;background:var(--bg)}
+.mk-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.mk-h h4{font-size:15px}
+.mk-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.mk-kpi{background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px 13px}
+.mk-kpi .l{font-size:9.5px;color:var(--muted2);text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+.mk-kpi .v{font-size:19px;font-weight:800;margin-top:2px}
+.mk-kpi .t{font-size:10.5px;color:var(--teal);font-weight:700}
+.mk-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.mk-col{background:#EEF3F0;border-radius:10px;padding:8px}
+.mk-col .ch{font-size:9.5px;font-weight:700;color:#47554E;margin-bottom:7px;display:flex;justify-content:space-between}
+.mk-card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:7px 8px;margin-bottom:6px;box-shadow:0 1px 2px rgba(8,34,26,.04)}
+.mk-card .n{font-size:10.5px;font-weight:600}
+.mk-card .m{font-size:8.5px;color:var(--muted2);margin-top:3px;display:flex;gap:4px;align-items:center}
+.mk-tag{font-size:8px;font-weight:700;padding:1px 5px;border-radius:99px;background:#E7F2ED;color:var(--green)}
+.mk-score{font-size:8px;font-weight:800;padding:1px 5px;border-radius:99px;background:var(--grad);color:#06251C}
+
+/* ---------- Section base ---------- */
+section{padding:84px 0}
+.sec-head{text-align:center;max-width:680px;margin:0 auto 46px}
+.sec-head h2{font-size:clamp(28px,4vw,44px);font-weight:850;letter-spacing:-.03em;line-height:1.08;margin:14px 0 14px}
+.sec-head p{font-size:18px;color:var(--muted)}
+
+/* ---------- Interactive Demo ---------- */
+#demo{padding-top:26px}
+.demo-shell{background:var(--ink);border-radius:26px;padding:8px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden}
+.demo-shell::before{content:"";position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(52,211,153,.25),transparent 70%);top:-140px;right:-80px;pointer-events:none}
+.demo-tabs{display:flex;gap:6px;padding:12px 14px 0;flex-wrap:wrap}
+.demo-tab{background:rgba(255,255,255,.06);color:#B9CBC2;border:1px solid rgba(255,255,255,.08);padding:9px 16px;border-radius:11px 11px 0 0;font-size:14px;font-weight:600;cursor:pointer;transition:.18s;display:flex;align-items:center;gap:8px}
+.demo-tab:hover{color:#fff;background:rgba(255,255,255,.1)}
+.demo-tab.on{background:var(--bg);color:var(--ink);border-color:transparent}
+.demo-stage{background:var(--bg);border-radius:0 16px 16px 16px;min-height:430px;padding:26px;position:relative}
+.demo-panel{display:none;animation:fade .4s ease}
+.demo-panel.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.demo-caption{text-align:center;color:#9FBDB0;font-size:13.5px;margin-top:14px;padding-bottom:6px}
+
+/* search demo */
+.d-searchbar{display:flex;gap:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 8px 8px 16px;box-shadow:var(--shadow);align-items:center;max-width:720px;margin:0 auto}
+.d-searchbar input{flex:1;border:none;outline:none;font-size:15.5px;font-family:inherit;background:none;color:var(--text)}
+.d-chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:14px 0 4px}
+.d-chip{font-size:12.5px;padding:6px 13px;border-radius:999px;border:1px dashed var(--line);color:var(--muted);cursor:pointer;background:#fff;transition:.15s}
+.d-chip:hover{border-color:var(--teal);color:var(--green);border-style:solid}
+.d-scan{max-width:720px;margin:20px auto 0;display:none}
+.d-scan.show{display:block}
+.d-scan-title{font-size:13.5px;font-weight:700;color:var(--green);display:flex;align-items:center;gap:9px;justify-content:center;margin-bottom:12px}
+.spin{width:15px;height:15px;border:2.5px solid #CDEBE0;border-top-color:var(--green);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.d-sources{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.d-src{font-size:11.5px;padding:6px 11px;border-radius:9px;background:#fff;border:1px solid var(--line);color:var(--muted2);opacity:.4;transition:.3s}
+.d-src.hit{opacity:1;color:var(--green);border-color:#BADBCB;background:#F0F9F4}
+.d-results{max-width:720px;margin:18px auto 0;display:grid;gap:11px}
+.d-res{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;gap:13px;align-items:center;opacity:0;transform:translateY(14px);box-shadow:var(--shadow)}
+.d-res.in{opacity:1;transform:none;transition:.5s}
+.d-av{width:44px;height:44px;border-radius:50%;background:var(--grad);color:#06251C;display:grid;place-items:center;font-weight:800;font-size:15px;flex-shrink:0}
+.d-res .rn{font-weight:700;font-size:15px}
+.d-res .rr{font-size:12.5px;color:var(--muted);margin-top:1px}
+.d-res .rf{font-size:11px;color:var(--muted2);margin-top:4px;display:flex;gap:5px;flex-wrap:wrap}
+.d-res .rf b{color:var(--green);font-weight:700}
+.d-match{margin-left:auto;text-align:center;flex-shrink:0}
+.d-match .mv{font-size:20px;font-weight:900;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.d-match .ml{font-size:9.5px;color:var(--muted2);text-transform:uppercase;letter-spacing:.03em;font-weight:700}
+
+/* copilot demo */
+.d-chat{max-width:660px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.d-chat-head{background:var(--ink);color:#fff;padding:13px 17px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px}
+.d-chat-head i{width:26px;height:26px;border-radius:8px;background:var(--grad);display:inline-grid;place-items:center;color:#06251C;font-weight:900;font-size:13px}
+.d-chat-body{padding:17px;min-height:210px;display:flex;flex-direction:column;gap:11px}
+.bubble{max-width:82%;padding:11px 15px;border-radius:15px;font-size:14px;line-height:1.5}
+.bubble.user{align-self:flex-end;background:var(--ink);color:#fff;border-bottom-right-radius:5px}
+.bubble.bot{align-self:flex-start;background:var(--bg);border:1px solid var(--line);border-bottom-left-radius:5px}
+.bubble .stat{margin-top:9px;display:flex;gap:8px;flex-wrap:wrap}
+.bubble .stat span{font-size:11.5px;font-weight:700;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px 9px}
+.bubble .stat span b{color:var(--green)}
+.typing{display:inline-flex;gap:4px;align-items:center}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted2);animation:bl 1s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes bl{0%,60%,100%{opacity:.3}30%{opacity:1}}
+
+/* pipeline demo */
+.d-pipe{max-width:760px;margin:0 auto}
+.d-pipe svg{width:100%;height:auto;display:block}
+.pnode{fill:#fff;stroke:#CFE0D8;stroke-width:1.5;rx:11}
+.pnode.src{fill:#F0F6FE;stroke:#BCD4F6}
+.pnode.out{fill:#EFF9F3;stroke:#B7DCC8}
+.pnode.pipe{fill:url(#pg);stroke:#2E7A5D}
+.pt{font-size:11px;font-weight:700;fill:#0D1A14}
+.pt.blue{fill:#1D4ED8}.pt.grn{fill:#1F5C46}
+
+/* ---------- Stats ---------- */
+.stats{background:var(--ink);color:#fff;border-radius:26px;padding:44px 30px;display:grid;grid-template-columns:repeat(4,1fr);gap:22px;text-align:center;position:relative;overflow:hidden}
+.stats::before{content:"";position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(45,212,191,.16),transparent 70%);top:-200px;left:-100px}
+.stat-v{font-size:clamp(30px,4vw,44px);font-weight:900;letter-spacing:-.03em}
+.stat-v .grad-text{display:inline}
+.stat-l{color:#9FBDB0;font-size:14px;margin-top:4px}
+
+/* ---------- Features ---------- */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.feat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px;transition:.25s}
+.feat:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:#CDE0D7}
+.feat-ic{width:48px;height:48px;border-radius:13px;background:linear-gradient(135deg,#E7F7F0,#DFF3EC);display:grid;place-items:center;font-size:23px;margin-bottom:16px}
+.feat h3{font-size:18.5px;font-weight:750;letter-spacing:-.01em;margin-bottom:8px}
+.feat p{font-size:14.5px;color:var(--muted)}
+
+/* ---------- How / pipeline story ---------- */
+.how{background:linear-gradient(180deg,#fff,#F1F8F4);border-radius:26px;padding:48px 40px;border:1px solid var(--line)}
+.how-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:14px}
+.how-step{position:relative;padding-left:8px}
+.how-num{width:36px;height:36px;border-radius:11px;background:var(--grad);color:#06251C;font-weight:900;display:grid;place-items:center;margin-bottom:12px}
+.how-step h4{font-size:17px;font-weight:750;margin-bottom:6px}
+.how-step p{font-size:14px;color:var(--muted)}
+
+/* ---------- Pricing ---------- */
+.price-toggle{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px;margin:0 auto 8px;gap:2px}
+.price-toggle button{border:none;background:none;padding:8px 18px;border-radius:999px;font-size:14px;font-weight:600;cursor:pointer;color:var(--muted);transition:.2s}
+.price-toggle button.on{background:var(--ink);color:#fff}
+.save-pill{font-size:11px;font-weight:800;color:#06251C;background:var(--lime);padding:2px 8px;border-radius:999px;margin-left:5px}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch;margin-top:34px}
+.plan{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:30px 26px;display:flex;flex-direction:column;position:relative;transition:.25s}
+.plan:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.plan.pop{border:2px solid transparent;background:linear-gradient(#fff,#fff) padding-box,var(--grad) border-box;box-shadow:var(--shadow-lg);transform:scale(1.02)}
+.plan.pop:hover{transform:scale(1.02) translateY(-4px)}
+.plan-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--grad);color:#06251C;font-size:12px;font-weight:800;padding:5px 15px;border-radius:999px;box-shadow:0 6px 18px rgba(45,212,191,.4)}
+.plan h3{font-size:20px;font-weight:800}
+.plan .desc{font-size:13.5px;color:var(--muted);margin:5px 0 18px;min-height:38px}
+.plan .price{display:flex;align-items:baseline;gap:4px}
+.plan .price .amt{font-size:42px;font-weight:900;letter-spacing:-.03em}
+.plan .price .per{font-size:14px;color:var(--muted)}
+.plan .price-sub{font-size:12.5px;color:var(--muted2);margin-top:4px;min-height:18px}
+.plan .btn{width:100%;justify-content:center;margin:20px 0}
+.plan ul{list-style:none;display:flex;flex-direction:column;gap:11px;margin-top:4px}
+.plan li{font-size:14px;display:flex;gap:10px;align-items:flex-start;color:var(--text)}
+.plan li .ic{flex-shrink:0;width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;margin-top:1px}
+.plan li.yes .ic{background:#DFF3EA;color:var(--green)}
+.plan li.no{color:var(--muted2)}
+.plan li.no .ic{background:#F0F1F0;color:#B4C0B9}
+.plan .feat-head{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin:16px 0 4px}
+
+/* ---------- CTA ---------- */
+.cta{background:var(--ink);border-radius:30px;padding:64px 40px;text-align:center;position:relative;overflow:hidden}
+.cta::before{content:"";position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(52,211,153,.22),transparent 68%);top:-260px;left:50%;transform:translateX(-50%)}
+.cta h2{color:#fff;font-size:clamp(28px,4vw,42px);font-weight:850;letter-spacing:-.03em;margin-bottom:14px;position:relative}
+.cta p{color:#B9CBC2;font-size:18px;max-width:520px;margin:0 auto 28px;position:relative}
+
+/* ---------- Footer ---------- */
+footer{padding:56px 0 40px}
+.foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:30px;padding-bottom:34px;border-bottom:1px solid var(--line)}
+.foot-brand p{font-size:14px;color:var(--muted);margin:14px 0;max-width:280px}
+.foot-col h5{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted2);margin-bottom:14px}
+.foot-col a{display:block;font-size:14.5px;color:var(--muted);margin-bottom:10px;transition:.15s}
+.foot-col a:hover{color:var(--text)}
+.foot-bot{display:flex;justify-content:space-between;align-items:center;padding-top:22px;font-size:13.5px;color:var(--muted2);flex-wrap:wrap;gap:10px}
+
+@media(max-width:900px){
+  .nav-links,.nav-cta .btn-light{display:none}
+  .menu-btn{display:block}
+  .mock-body{grid-template-columns:1fr}.mock-side{display:none}
+  .mk-cols{grid-template-columns:repeat(2,1fr)}
+  .feat-grid,.price-grid,.how-steps,.foot-grid{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .plan.pop{transform:none}.plan.pop:hover{transform:translateY(-4px)}
+  section{padding:60px 0}
+}
+</style>
+</head>
+<body>
+
+<header id="hdr">
+  <div class="wrap nav">
+    <div class="brand">
+      <span class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h10M4 12h16M4 17h7" stroke="#06251C" stroke-width="2.4" stroke-linecap="round"/><circle cx="19" cy="7" r="2.4" fill="#06251C"/><circle cx="14" cy="17" r="2.4" fill="#06251C"/></svg></span>
+      <span><b>Process</b><span>.io</span></span>
+    </div>
+    <nav class="nav-links">
+      <a href="#features">Produkt</a>
+      <a href="#demo">Demo</a>
+      <a href="#how">Så funkar det</a>
+      <a href="#pricing">Priser</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-light" href="#">Logga in</a>
+      <a class="btn btn-primary" href="#pricing">Kom igång <span>→</span></a>
+    </div>
+    <button class="menu-btn" aria-label="Meny" onclick="document.querySelector('.nav-links').classList.toggle('mopen')">☰</button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+  <div class="wrap">
+    <span class="pill" style="background:#fff;border:1px solid var(--line);color:var(--green);box-shadow:var(--shadow)">✦ Rekryterings-OS för moderna team</span>
+    <h1>Hela rekryteringen.<br><span class="grad-text">Ett enda flöde.</span></h1>
+    <p class="sub">Process.io förenar workforce planning, AI-sourcing, pipeline och beslut i en plattform. Slut på Excel-listor, tappade kandidater och chefsfeedback som fastnar i Slack.</p>
+    <div class="hero-cta">
+      <a class="btn btn-accent" href="#pricing">Starta gratis <span>→</span></a>
+      <a class="btn btn-light" href="#demo">▶ Testa demon</a>
+    </div>
+    <div class="hero-note">
+      <span><span class="check">✓</span> Ingen kortuppgift</span>
+      <span><span class="check">✓</span> Igång på 10 minuter</span>
+      <span><span class="check">✓</span> GDPR-säkert</span>
+    </div>
+
+    <!-- product mockup -->
+    <div class="mock reveal">
+      <div class="mock-bar"><span class="dot" style="background:#FF5F57"></span><span class="dot" style="background:#FEBC2E"></span><span class="dot" style="background:#28C840"></span>
+        <span style="margin-left:12px;font-size:11.5px;color:var(--muted2)">app.process.io</span></div>
+      <div class="mock-body">
+        <div class="mock-side">
+          <div class="ms-brand"><i></i> Process.io</div>
+          <div class="ms-item on"><i></i> Översikt</div>
+          <div class="ms-item"><i></i> Planering</div>
+          <div class="ms-item"><i></i> AI-sourcing</div>
+          <div class="ms-item"><i></i> Kandidater</div>
+          <div class="ms-item"><i></i> Analys</div>
+        </div>
+        <div class="mock-main">
+          <div class="mk-h"><h4>God morgon, Eva 👋</h4><span style="font-size:11px;color:var(--muted2)">Torsdag 4 juli</span></div>
+          <div class="mk-kpis">
+            <div class="mk-kpi"><div class="l">Time-to-hire</div><div class="v">24 dgr</div><div class="t">▼ 6 dagar</div></div>
+            <div class="mk-kpi"><div class="l">I pipeline</div><div class="v">27</div><div class="t">▲ 5 denna vecka</div></div>
+            <div class="mk-kpi"><div class="l">Feedback-svar</div><div class="v">4 tim</div><div class="t">▼ från 3 dagar</div></div>
+          </div>
+          <div class="mk-cols">
+            <div class="mk-col"><div class="ch">Nya <span>3</span></div>
+              <div class="mk-card"><div class="n">Anders Sjöberg</div><div class="m"><span class="mk-tag">LinkedIn</span></div></div>
+              <div class="mk-card"><div class="n">Fatima Al-Sayed</div><div class="m"><span class="mk-tag">Referral</span></div></div></div>
+            <div class="mk-col"><div class="ch">Screening <span>2</span></div>
+              <div class="mk-card"><div class="n">Oskar Lindgren</div><div class="m"><span class="mk-score">★ 4,1</span></div></div></div>
+            <div class="mk-col"><div class="ch">Intervju <span>2</span></div>
+              <div class="mk-card"><div class="n">Maria Nilsson</div><div class="m"><span class="mk-score">★ 3,9</span></div></div></div>
+            <div class="mk-col"><div class="ch">Erbjudande <span>1</span></div>
+              <div class="mk-card"><div class="n">Johan Ek</div><div class="m"><span class="mk-score">★ 4,5</span></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTERACTIVE DEMO -->
+<section id="demo">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">● Interaktiv demo</span>
+      <h2>Prova plattformen — direkt i webbläsaren</h2>
+      <p>Ingen inloggning. Klicka runt i tre av Process.ios kärnfunktioner och se varför team byter från spretiga verktyg till ett flöde.</p>
+    </div>
+
+    <div class="demo-shell reveal">
+      <div class="demo-tabs">
+        <button class="demo-tab on" data-tab="search">🔍 AI-sourcing</button>
+        <button class="demo-tab" data-tab="copilot">✦ Copilot</button>
+        <button class="demo-tab" data-tab="pipe">⛓ Datapipeline</button>
+      </div>
+      <div class="demo-stage">
+
+        <!-- search -->
+        <div class="demo-panel on" id="p-search">
+          <div class="d-searchbar">
+            <span style="color:var(--muted2);font-size:18px">⌕</span>
+            <input id="d-q" placeholder="t.ex. senior backendutvecklare i Stockholm med Kafka…" />
+            <button class="btn btn-accent" onclick="runSearch()">Sök</button>
+          </div>
+          <div class="d-chips">
+            <span class="d-chip" onclick="chip(this)">senior backendutvecklare med Kafka och open source</span>
+            <span class="d-chip" onclick="chip(this)">ux-designer med designsystem</span>
+            <span class="d-chip" onclick="chip(this)">data engineer som kan dbt</span>
+          </div>
+          <div class="d-scan" id="d-scan">
+            <div class="d-scan-title"><span class="spin"></span> Söker över hela webben & ditt nätverk…</div>
+            <div class="d-sources" id="d-sources">
+              <span class="d-src">GitHub</span><span class="d-src">Portföljer</span><span class="d-src">Konferenser</span>
+              <span class="d-src">Forskning</span><span class="d-src">Stack Overflow</span><span class="d-src">LinkedIn</span>
+            </div>
+          </div>
+          <div class="d-results" id="d-results"></div>
+        </div>
+
+        <!-- copilot -->
+        <div class="demo-panel" id="p-copilot">
+          <div class="d-chat">
+            <div class="d-chat-head"><i>R</i> Rita — din ledningscopilot</div>
+            <div class="d-chat-body" id="d-chat">
+              <div class="bubble bot">Fråga mig om planläget, förseningar, budget eller kanal-ROI — jag räknar live ur pipelinen. 👇</div>
+            </div>
+          </div>
+          <div class="d-chips">
+            <span class="d-chip" onclick="askCopilot(0)">Vilka roller riskerar försening?</span>
+            <span class="d-chip" onclick="askCopilot(1)">Vilken kanal ger bäst ROI?</span>
+            <span class="d-chip" onclick="askCopilot(2)">Ligger vi i fas mot årsplanen?</span>
+          </div>
+        </div>
+
+        <!-- pipeline -->
+        <div class="demo-panel" id="p-pipe">
+          <div class="d-pipe">
+            <svg viewBox="0 0 720 300">
+              <defs>
+                <linearGradient id="pg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#EAF4EF"/><stop offset="1" stop-color="#DDEEE5"/></linearGradient>
+                <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#7C9C8E"/></marker>
+              </defs>
+              <!-- flows -->
+              <g id="flows" stroke="#B6CDF5" stroke-width="2" fill="none">
+                <path d="M110 66 C110 120,360 110,360 130"/><path d="M290 66 C290 120,360 110,360 130"/>
+                <path d="M470 66 C470 120,360 110,360 130"/><path d="M620 66 C620 120,360 110,360 130"/>
+              </g>
+              <g stroke="#ABCEBB" stroke-width="2" fill="none">
+                <path d="M360 176 C360 210,150 210,150 234"/><path d="M360 176 C360 210,360 210,360 234"/><path d="M360 176 C360 210,570 210,570 234"/>
+              </g>
+              <!-- animated dots -->
+              <circle r="3.5" fill="#2563EB"><animateMotion dur="2.6s" repeatCount="indefinite" path="M110 66 C110 120,360 110,360 130"/></circle>
+              <circle r="3.5" fill="#2563EB"><animateMotion dur="2.6s" begin="1s" repeatCount="indefinite" path="M470 66 C470 120,360 110,360 130"/></circle>
+              <circle r="3.5" fill="#2563EB"><animateMotion dur="2.6s" begin="1.6s" repeatCount="indefinite" path="M620 66 C620 120,360 110,360 130"/></circle>
+              <circle r="3.5" fill="#1F5C46"><animateMotion dur="2.6s" begin=".5s" repeatCount="indefinite" path="M360 176 C360 210,150 210,150 234"/></circle>
+              <circle r="3.5" fill="#1F5C46"><animateMotion dur="2.6s" begin="1.3s" repeatCount="indefinite" path="M360 176 C360 210,570 210,570 234"/></circle>
+              <!-- sources -->
+              <g><rect class="pnode src" x="55" y="26" width="110" height="40" rx="11"/><text class="pt blue" x="110" y="50" text-anchor="middle">Planering</text></g>
+              <g><rect class="pnode src" x="235" y="26" width="110" height="40" rx="11"/><text class="pt blue" x="290" y="50" text-anchor="middle">AI-sourcing</text></g>
+              <g><rect class="pnode src" x="415" y="26" width="110" height="40" rx="11"/><text class="pt blue" x="470" y="50" text-anchor="middle">Ansökningar</text></g>
+              <g><rect class="pnode src" x="565" y="26" width="110" height="40" rx="11"/><text class="pt blue" x="620" y="50" text-anchor="middle">Chefer</text></g>
+              <!-- pipe -->
+              <rect class="pnode pipe" x="150" y="130" width="420" height="46" rx="23"/>
+              <text class="pt grn" x="360" y="158" text-anchor="middle">Samla in → Strukturera & tvätta → Lagra</text>
+              <!-- outputs -->
+              <g><rect class="pnode out" x="90" y="234" width="120" height="40" rx="11"/><text class="pt grn" x="150" y="258" text-anchor="middle">Dashboard</text></g>
+              <g><rect class="pnode out" x="300" y="234" width="120" height="40" rx="11"/><text class="pt grn" x="360" y="258" text-anchor="middle">Beslut</text></g>
+              <g><rect class="pnode out" x="510" y="234" width="120" height="40" rx="11"/><text class="pt grn" x="570" y="258" text-anchor="middle">Ledning</text></g>
+            </svg>
+          </div>
+          <p style="text-align:center;color:var(--muted);font-size:14px;max-width:540px;margin:2px auto 0">All data fångas strukturerat vid källan och flödar genom en enda pipeline — <b style="color:var(--green)">rådata in (blått), rena insikter ut (grönt)</b>. Inget hamnar i mail eller Excel.</p>
+        </div>
+
+      </div>
+    </div>
+    <div class="demo-caption">Riktig produktlogik, mockad data · byggd på samma motor som Process.io kör i skarpt läge</div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section style="padding-top:20px">
+  <div class="wrap">
+    <div class="stats reveal">
+      <div><div class="stat-v"><span class="grad-text">−48%</span></div><div class="stat-l">kortare time-to-hire</div></div>
+      <div><div class="stat-v"><span class="grad-text">4 tim</span></div><div class="stat-l">chefsfeedback (från 3 dagar)</div></div>
+      <div><div class="stat-v"><span class="grad-text">1</span></div><div class="stat-l">plattform istället för 6 verktyg</div></div>
+      <div><div class="stat-v"><span class="grad-text">100%</span></div><div class="stat-l">spårbar & GDPR-säker data</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">● Allt i ett flöde</span>
+      <h2>Ett verktyg för hela resan</h2>
+      <p>Från budget och plan till anställning och uppföljning — utan att byta flik.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat reveal"><div class="feat-ic">📊</div><h3>Workforce planning</h3><p>Importera er Excel-plan en gång — sedan lever budget, mål och prognos live mot pipelinen. Aldrig mer döda celler.</p></div>
+      <div class="feat reveal"><div class="feat-ic">🔍</div><h3>AI-sourcing</h3><p>Sök kandidater över hela webben med naturligt språk. Profiler byggs automatiskt och matchas förklarbart mot kravprofilen.</p></div>
+      <div class="feat reveal"><div class="feat-ic">📨</div><h3>Outreach & inbox</h3><p>Sekvenser, gemensam inkorg och AI-utkast. Ett svar flyttar kandidaten i pipelinen — allt i samma flöde.</p></div>
+      <div class="feat reveal"><div class="feat-ic">🎯</div><h3>Pipeline & feedback</h3><p>Kanban utan Excel. Chefen svarar via röst, foto eller text utan inloggning — strukturerat på sekunder.</p></div>
+      <div class="feat reveal"><div class="feat-ic">✍️</div><h3>Beslut & e-sign</h3><p>Jämförbara scorecards, dokumenterade beslut och digitala erbjudanden som kandidaten signerar direkt.</p></div>
+      <div class="feat reveal"><div class="feat-ic">🛡️</div><h3>Compliance & analys</h3><p>Append-only audit, GDPR-gallring och en copilot som svarar ledningen i naturligt språk — live ur datan.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section id="how" style="padding-top:20px">
+  <div class="wrap">
+    <div class="how reveal">
+      <div class="sec-head" style="margin-bottom:10px">
+        <span class="eyebrow">● Så funkar det</span>
+        <h2>Tre steg till ett rent flöde</h2>
+      </div>
+      <div class="how-steps">
+        <div class="how-step"><div class="how-num">1</div><h4>Planera</h4><p>Sätt budget, mål och kravprofiler. Delegera till rekryterare och låt systemet varna automatiskt när något ligger efter.</p></div>
+        <div class="how-step"><div class="how-num">2</div><h4>Fånga</h4><p>Sourca, annonsera och ta emot ansökningar. Varje datapunkt struktureras vid källan — inget hamnar i mail eller Excel.</p></div>
+        <div class="how-step"><div class="how-num">3</div><h4>Besluta & lär</h4><p>Jämför scorecards, fatta försvarbara beslut och koppla utfallet tillbaka till urvalet. Loopen sluts.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">● Priser</span>
+      <h2>Enkel prissättning som växer med er</h2>
+      <p>Börja gratis. Uppgradera när ni är redo. Inga dolda avgifter.</p>
+    </div>
+    <div style="text-align:center" class="reveal">
+      <div class="price-toggle">
+        <button class="on" id="t-month" onclick="setCycle('month')">Månadsvis</button>
+        <button id="t-year" onclick="setCycle('year')">Årsvis <span class="save-pill">−20%</span></button>
+      </div>
+    </div>
+
+    <div class="price-grid">
+      <!-- Starter -->
+      <div class="plan reveal">
+        <h3>Starter</h3>
+        <div class="desc">För små team som vill bort från Excel och mailtrådar.</div>
+        <div class="price"><span class="amt" data-m="0" data-y="0">0</span><span class="per">kr/mån</span></div>
+        <div class="price-sub">Gratis för alltid · upp till 3 användare</div>
+        <a class="btn btn-light" href="#">Kom igång gratis</a>
+        <div class="feat-head">Ingår</div>
+        <ul>
+          <li class="yes"><span class="ic">✓</span> ATS & kanban-pipeline</li>
+          <li class="yes"><span class="ic">✓</span> Karriärsida & publik ansökan</li>
+          <li class="yes"><span class="ic">✓</span> Strukturerad chefsfeedback</li>
+          <li class="yes"><span class="ic">✓</span> 1 aktiv roll · 3 användare</li>
+          <li class="no"><span class="ic">✕</span> AI-sourcing</li>
+          <li class="no"><span class="ic">✕</span> Workforce planning</li>
+          <li class="no"><span class="ic">✕</span> Compliance & audit</li>
+        </ul>
+      </div>
+
+      <!-- Growth -->
+      <div class="plan pop reveal">
+        <div class="plan-badge">POPULÄRAST</div>
+        <h3>Growth</h3>
+        <div class="desc">För växande team som vill sourca proaktivt och mäta allt.</div>
+        <div class="price"><span class="amt" data-m="2990" data-y="2392">2 990</span><span class="per">kr/mån</span></div>
+        <div class="price-sub">per team · obegränsat antal roller</div>
+        <a class="btn btn-accent" href="#">Starta 14 dagars trial</a>
+        <div class="feat-head">Allt i Starter, plus</div>
+        <ul>
+          <li class="yes"><span class="ic">✓</span> AI-sourcing & smart matchning</li>
+          <li class="yes"><span class="ic">✓</span> Outreach-sekvenser & inbox</li>
+          <li class="yes"><span class="ic">✓</span> Workforce planning + Excel-import</li>
+          <li class="yes"><span class="ic">✓</span> Headhunt-länkar & attribution</li>
+          <li class="yes"><span class="ic">✓</span> Analys & rapportbyggare</li>
+          <li class="yes"><span class="ic">✓</span> Obegränsat antal användare</li>
+          <li class="no"><span class="ic">✕</span> SSO, audit & AI-transparens</li>
+        </ul>
+      </div>
+
+      <!-- Enterprise -->
+      <div class="plan reveal">
+        <h3>Enterprise</h3>
+        <div class="desc">För organisationer med krav på styrning, säkerhet och skala.</div>
+        <div class="price"><span class="amt">Offert</span></div>
+        <div class="price-sub">skräddarsytt · from 12 000 kr/mån</div>
+        <a class="btn btn-light" href="#">Boka demo</a>
+        <div class="feat-head">Allt i Growth, plus</div>
+        <ul>
+          <li class="yes"><span class="ic">✓</span> Requisitions & godkännandekedjor</li>
+          <li class="yes"><span class="ic">✓</span> Compliance-center & audit-logg</li>
+          <li class="yes"><span class="ic">✓</span> Copilot-Q&A för ledning</li>
+          <li class="yes"><span class="ic">✓</span> SSO, rollstyrning & datamodell-API</li>
+          <li class="yes"><span class="ic">✓</span> BankID e-sign & Fortnox/HRIS</li>
+          <li class="yes"><span class="ic">✓</span> Dedikerad onboarding & SLA</li>
+          <li class="yes"><span class="ic">✓</span> Prioriterad support</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="padding-top:10px">
+  <div class="wrap">
+    <div class="cta reveal">
+      <h2>Redo att samla hela rekryteringen på ett ställe?</h2>
+      <p>Kom igång på minuter. Ingen kortuppgift, ingen implementationsavgift.</p>
+      <div style="position:relative;display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-accent" href="#pricing">Starta gratis <span>→</span></a>
+        <a class="btn btn-ghost" href="#demo">Testa demon</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="brand"><span class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h10M4 12h16M4 17h7" stroke="#06251C" stroke-width="2.4" stroke-linecap="round"/><circle cx="19" cy="7" r="2.4" fill="#06251C"/><circle cx="14" cy="17" r="2.4" fill="#06251C"/></svg></span><span><b>Process</b><span>.io</span></span></div>
+        <p>Rekryterings-OS:et som förenar plan, sourcing, pipeline och beslut i ett enda flöde.</p>
+      </div>
+      <div class="foot-col"><h5>Produkt</h5><a href="#features">Funktioner</a><a href="#demo">Demo</a><a href="#pricing">Priser</a><a href="#how">Så funkar det</a></div>
+      <div class="foot-col"><h5>Företag</h5><a href="#">Om oss</a><a href="#">Kunder</a><a href="#">Blogg</a><a href="#">Jobb</a></div>
+      <div class="foot-col"><h5>Resurser</h5><a href="#">Hjälpcenter</a><a href="#">API-dokumentation</a><a href="#">GDPR & säkerhet</a><a href="#">Status</a></div>
+    </div>
+    <div class="foot-bot">
+      <span>© 2026 Process.io — demo-sajt. All data är fiktiv.</span>
+      <span style="display:flex;gap:18px"><a href="#">Villkor</a><a href="#">Integritet</a><a href="#">Cookies</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// nav scroll
+const hdr=document.getElementById('hdr');
+addEventListener('scroll',()=>hdr.classList.toggle('scrolled',scrollY>10));
+
+// reveal on scroll
+const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// demo tabs
+document.querySelectorAll('.demo-tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.demo-tab').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.demo-panel').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on');
+  document.getElementById('p-'+t.dataset.tab).classList.add('on');
+});
+
+// pricing cycle
+function setCycle(c){
+  document.getElementById('t-month').classList.toggle('on',c==='month');
+  document.getElementById('t-year').classList.toggle('on',c==='year');
+  document.querySelectorAll('.plan .amt').forEach(a=>{
+    const v=c==='year'?a.dataset.y:a.dataset.m;
+    if(v!==undefined&&a.dataset.m!==undefined){a.textContent=(+v).toLocaleString('sv-SE')}
+  });
+}
+
+// ---- search demo ----
+const POOL={
+  backend:[
+    {n:'Noa Lindqvist',i:'NL',r:'Senior Backend Engineer · Stockholm',f:['+ Kafka i <b>3 repos</b>','+ open source-bidrag','+ 6 år'],m:80},
+    {n:'Yara El-Amin',i:'YE',r:'Backend Developer · Göteborg',f:['+ Node.js & <b>PostgreSQL</b>','+ SQL-optimering','+ 5 år'],m:72},
+    {n:'Elias Berg',i:'EB',r:'Fullstack Engineer · Remote',f:['+ TypeScript & React','+ egen <b>SaaS</b>','+ 4 år'],m:66}
+  ],
+  ux:[
+    {n:'Maja Fors',i:'MF',r:'Product Designer · Stockholm',f:['+ <b>designsystem</b> för 40 utv.','+ tillgänglighet','+ 7 år'],m:83},
+    {n:'Omar Haddad',i:'OH',r:'UX Engineer · Uppsala',f:['+ Figma & React','+ komponentbibliotek','+ 5 år'],m:69}
+  ],
+  data:[
+    {n:'Sara Ekström',i:'SE',r:'Data Engineer · Stockholm',f:['+ Python & <b>dbt</b>','+ forskningsartikel','+ 6 år'],m:78},
+    {n:'Johanna Vik',i:'JV',r:'Analytics Engineer · Remote',f:['+ SQL & dbt','+ dashboards','+ 4 år'],m:71}
+  ]
+};
+function pick(q){q=q.toLowerCase();if(q.includes('ux')||q.includes('design'))return POOL.ux;if(q.includes('data')||q.includes('dbt'))return POOL.data;return POOL.backend;}
+function chip(el){document.getElementById('d-q').value=el.textContent;runSearch();}
+function runSearch(){
+  const q=document.getElementById('d-q').value.trim()||'senior backendutvecklare';
+  const scan=document.getElementById('d-scan'),srcs=[...document.querySelectorAll('#d-sources .d-src')],res=document.getElementById('d-results');
+  res.innerHTML='';srcs.forEach(s=>s.classList.remove('hit'));scan.classList.add('show');
+  srcs.forEach((s,i)=>setTimeout(()=>s.classList.add('hit'),150+i*160));
+  setTimeout(()=>{
+    scan.classList.remove('show');
+    const list=pick(q);
+    list.forEach((c,i)=>{
+      const el=document.createElement('div');el.className='d-res';
+      el.innerHTML=`<div class="d-av">${c.i}</div>
+        <div style="flex:1"><div class="rn">${c.n}</div><div class="rr">${c.r}</div><div class="rf">${c.f.join(' · ')}</div></div>
+        <div class="d-match"><div class="mv">${c.m}%</div><div class="ml">Match</div></div>`;
+      res.appendChild(el);setTimeout(()=>el.classList.add('in'),80+i*140);
+    });
+  },1250);
+}
+
+// ---- copilot demo ----
+const QA=[
+  {q:'Vilka roller riskerar försening?',a:'2 roller riskerar att missa målstart:',s:['<b>Ekonomiassistent</b> — prognos 22 aug','<b>Kundtjänstchef</b> — ej startad']},
+  {q:'Vilken kanal ger bäst ROI?',a:'Referrals ger flest anställda per krona. Av de betalda kanalerna vinner LinkedIn.',s:['Referral <b>25 000 kr</b>/anställd','LinkedIn <b>12 000 kr</b>/anställd']},
+  {q:'Ligger vi i fas mot årsplanen?',a:'12 av 27 planerade tjänster är tillsatta. Inga roller ligger efter plan just nu.',s:['<b>44%</b> tillsatta','<b>0</b> efter plan']}
+];
+let chatBusy=false;
+function askCopilot(i){
+  if(chatBusy)return;chatBusy=true;
+  const body=document.getElementById('d-chat'),qa=QA[i];
+  const u=document.createElement('div');u.className='bubble user';u.textContent=qa.q;body.appendChild(u);
+  const t=document.createElement('div');t.className='bubble bot';t.innerHTML='<span class="typing"><i></i><i></i><i></i></span>';body.appendChild(t);
+  body.scrollTop=body.scrollHeight;
+  setTimeout(()=>{
+    t.innerHTML=qa.a+(qa.s?'<div class="stat">'+qa.s.map(x=>'<span>'+x+'</span>').join('')+'</div>':'');
+    body.scrollTop=body.scrollHeight;chatBusy=false;
+  },1100);
+}
+</script>
+</body>
+</html>
