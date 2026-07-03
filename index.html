@@ -150,6 +150,28 @@ header.scrolled{background:rgba(246,250,248,.85);backdrop-filter:blur(14px);bord
 .mk-fb{border-radius:8px;padding:7px 9px;font-size:9px;font-weight:600}
 .mk-fb.a{background:#FBF6F1;border:1px dashed #E5CDB4;color:#8A6A48}
 .mk-fb.b{background:#EAF4EF;border:1px solid #BFDACC;color:var(--green)}
+/* candidate detail */
+.mk-back{font-size:9.5px;color:var(--green);font-weight:700;cursor:pointer;background:none;border:none;padding:0;margin-bottom:8px}
+.mk-det-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.mk-det-av{width:38px;height:38px;border-radius:50%;background:var(--grad);color:#06251C;display:grid;place-items:center;font-weight:800;font-size:14px;flex-shrink:0}
+.mk-det-head .dn{font-size:14px;font-weight:750}
+.mk-det-head .dm{font-size:9.5px;color:var(--muted2)}
+.mk-det-chips{display:flex;gap:5px;margin-top:4px;align-items:center}
+.mk-tabs2{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:11px}
+.mk-tab{font-size:10px;font-weight:600;color:var(--muted);padding:6px 9px;border:none;background:none;border-bottom:2px solid transparent;cursor:pointer;font-family:inherit}
+.mk-tab.on{color:var(--green);border-bottom-color:var(--green)}
+.mk-tabpane{display:none}.mk-tabpane.on{display:block;animation:fade .25s}
+.mk-contact{font-size:9.5px;color:var(--muted2);display:flex;gap:12px;margin:7px 0}
+.mk-sublab{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--muted2);margin:11px 0 6px}
+.mk-tl{position:relative;padding-left:15px}
+.mk-tl::before{content:"";position:absolute;left:3px;top:4px;bottom:4px;width:2px;background:#E7F2ED}
+.mk-tl-item{position:relative;margin-bottom:9px;font-size:10px}
+.mk-tl-item::before{content:"";position:absolute;left:-15px;top:3px;width:7px;height:7px;border-radius:50%;border:2px solid var(--green2);background:#fff}
+.mk-tl-item .tt{font-size:8.5px;color:var(--muted2)}
+.mk-doc{border:1px solid var(--line);border-radius:9px;padding:10px;margin-bottom:8px;background:#fff}
+.mk-doc .dh{display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:600;margin-bottom:8px}
+.mk-doc .dl{height:5px;border-radius:3px;background:#EEF3F0;margin-bottom:5px}
+.mk-dlbtn{font-size:8.5px;font-weight:700;color:var(--green);background:#EAF4EF;border:none;border-radius:6px;padding:4px 9px;cursor:pointer;font-family:inherit}
 
 /* ---------- Section base ---------- */
 section{padding:84px 0}
@@ -413,7 +435,7 @@ footer{padding:56px 0 40px}
 
           <!-- Kandidater -->
           <div class="mk-screen" id="mk-kandidater">
-            <div class="mk-h"><h4>Kandidater — Backend-utvecklare</h4><span style="font-size:11px;color:var(--muted2)">dra kort mellan steg</span></div>
+            <div class="mk-h"><h4>Kandidater — Backend-utvecklare</h4><span style="font-size:11px;color:var(--muted2)">klicka på ett kort · dra mellan steg</span></div>
             <div class="mk-cols" style="grid-template-columns:repeat(4,1fr)">
               <div class="mk-col"><div class="ch">Screening <span>2</span></div>
                 <div class="mk-card mk-drag"><div class="n">Emma Karlsson</div><div class="m"><span class="mk-tag">Arbetsförm.</span></div></div>
@@ -454,6 +476,29 @@ footer{padding:56px 0 40px}
               <div class="mk-brow"><span class="bl">Erbjudande</span><span class="bb" style="width:20%">2 d</span></div>
             </div>
             <div style="margin-top:10px;font-size:9.5px;color:#A16207;font-weight:700;background:#FEF6E0;border-radius:8px;padding:6px 9px">⚠ Case/Teknisk tar 9 dagar — värdet syns direkt eftersom varje steg är tidsstämplat</div>
+          </div>
+
+          <!-- Kandidatpanel (öppnas vid klick på ett kort) -->
+          <div class="mk-screen" id="mk-detail">
+            <button class="mk-back" onclick="mkBack()">← Tillbaka</button>
+            <div class="mk-det-head">
+              <div class="mk-det-av" id="det-av">JE</div>
+              <div style="flex:1">
+                <div class="dn" id="det-name">—</div>
+                <div class="dm" id="det-meta">—</div>
+                <div class="mk-det-chips" id="det-chips"></div>
+              </div>
+            </div>
+            <div class="mk-tabs2">
+              <button class="mk-tab on" data-t="oversikt" onclick="detTab(this)">Översikt</button>
+              <button class="mk-tab" data-t="bedom" onclick="detTab(this)">Bedömningar</button>
+              <button class="mk-tab" data-t="fb" onclick="detTab(this)">Feedback</button>
+              <button class="mk-tab" data-t="dok" onclick="detTab(this)">Dokument</button>
+            </div>
+            <div class="mk-tabpane on" id="det-oversikt"></div>
+            <div class="mk-tabpane" id="det-bedom"></div>
+            <div class="mk-tabpane" id="det-fb"></div>
+            <div class="mk-tabpane" id="det-dok"></div>
           </div>
         </div>
       </div>
@@ -734,13 +779,78 @@ function mkScreen(el){
   document.querySelectorAll('.mk-screen').forEach(s=>s.classList.remove('on'));
   document.getElementById('mk-'+el.dataset.scr).classList.add('on');
 }
-// hero mockup — draggable kanban cards (real drag & drop)
-let dragCard=null;
+// ---- hero mockup — candidate detail (click a card) ----
+const sc=(t,by,rows,q)=>({t,by,rows,q});
+const CAND={
+ 'Johan Ek':{role:'Backend-utvecklare',src:'LinkedIn',stage:'Erbjudande',score:'4,5',applied:'2026-05-12',
+   cv:'Fullstackutvecklare med 6 års erfarenhet av Node.js och TypeScript på fintech-bolag. Har byggt och driftat mikrotjänster på AWS med hög belastning.',phone:'070-123 45 67',gdpr:'2027-01-15',
+   tl:[['2026-06-30','Accepterade erbjudandet 🎉'],['2026-06-26','Erbjudande skickat (58 000 kr/mån)'],['2026-06-22','Slutintervju genomförd (4,5)']],
+   sc:[sc('Teknisk intervju/Case','Marcus Öhrn',[['TypeScript/Node.js',5],['Systemdesign',5],['SQL & datamodellering',4],['Samarbete',4]],'Stark på systemdesign, lite tunn på SQL-optimering men lär sig snabbt — klart godkänd.')],
+   fb:[['Marcus Öhrn','🎤 Röstmemo → strukturerad scorecard (4,6) · svarstid 4 tim'],['Nadia Berg','Lyfter hela teamet. Rekommenderas för erbjudande.']]},
+ 'Amir Haddad':{role:'Backend-utvecklare',src:'LinkedIn',stage:'Referenser',score:'4,2',applied:'2026-05-15',
+   cv:'Systemutvecklare med 7 års erfarenhet, senast på SaaS-bolag inom logistik. Van vid Kubernetes, CI/CD-pipelines och att mentora juniora kollegor.',phone:'070-345 67 89',gdpr:'2027-01-20',
+   tl:[['2026-07-01','Flyttad till Referenser'],['2026-06-26','Slutintervju genomförd (4,1)'],['2026-06-17','Tekniskt case bedömt (4,4)']],
+   sc:[sc('Teknisk intervju/Case','Marcus Öhrn',[['TypeScript/Node.js',4],['Systemdesign',5],['SQL & datamodellering',4],['Problemlösning',5]],'Löste caset snabbast av alla. Mycket stark på drift och observability.')],
+   fb:[['Marcus Öhrn','📷 Foto av anteckningar → scorecard (4,4)']]},
+ 'Maria Nilsson':{role:'Backend-utvecklare',src:'LinkedIn',stage:'Intervju',score:'3,9',applied:'2026-06-10',
+   cv:'Backendutvecklare med 5 års erfarenhet från bank. Stark på SQL och batch-processning, vill växla till modernare stack.',phone:'070-678 90 12',gdpr:'2027-02-20',
+   tl:[['2026-06-29','Telefonintervju genomförd (3,9)'],['2026-06-12','CV-screening godkänd']],
+   sc:[sc('Telefonintervju','Eva Lindqvist',[['TypeScript/Node.js',3],['Systemdesign',4],['SQL & datamodellering',5],['Samarbete',4]],'Starkast SQL-profil i processen. TypeScript-erfarenheten är begränsad men grunderna sitter.')],
+   fb:[]},
+ 'Erik Lund':{role:'Backend-utvecklare',src:'Karriärsida',stage:'Case/Teknisk',score:'4,1',applied:'2026-06-02',
+   cv:'Backendutvecklare med 4 års erfarenhet från medtech. Noggrann, testdriven och van vid regulatoriska krav.',phone:'070-456 78 90',gdpr:'2027-03-01',
+   tl:[['2026-07-02','Feedbackförfrågan skickad till chef'],['2026-06-24','Flyttad till Case/Teknisk'],['2026-06-11','Telefonintervju (4,1)']],
+   sc:[sc('Telefonintervju','Eva Lindqvist',[['TypeScript/Node.js',4],['Systemdesign',4],['SQL & datamodellering',4],['Samarbete',4]],'Metodisk och kvalitetsmedveten. Testdriven på riktigt, inte bara på pappret.')],
+   fb:[['Marcus Öhrn','Väntande — feedbackförfrågan skickad 2 jul']]},
+ 'Oskar Lindgren':{role:'Backend-utvecklare',src:'Karriärsida',stage:'Screening',score:'4,1',applied:'2026-06-20',
+   cv:'Nyexaminerad civilingenjör i datateknik med två somrars praktik på spelbolag. Portfölj med egna Node.js-projekt.',phone:'070-789 01 23',gdpr:'2027-04-01',
+   tl:[['2026-06-27','Flyttad till Screening'],['2026-06-20','Ansökan mottagen via karriärsidan']],sc:[],fb:[]},
+ 'Emma Karlsson':{role:'Backend-utvecklare',src:'Arbetsförmedlingen',stage:'Screening',score:'',applied:'2026-06-22',
+   cv:'Utvecklare med 4 års Java som skolat om sig till Node.js via bootcamp. Söker första renodlade TypeScript-rollen.',phone:'070-890 12 34',gdpr:'2027-03-15',
+   tl:[['2026-06-29','Flyttad till Screening'],['2026-06-22','Ansökan mottagen']],sc:[],fb:[]}
+};
+const initials=n=>n.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+const slug=n=>n.toLowerCase().replace(/[åä]/g,'a').replace(/ö/g,'o').replace(/[^a-z]/g,'.');
+const dots=n=>'<span class="mk-dots">'+[0,1,2,3,4].map(i=>'<i class="mk-dot'+(i<n?' on':'')+'"></i>').join('')+'</span>';
+function genCand(name){return{role:'Backend-utvecklare',src:'LinkedIn',stage:'Nya',score:'',applied:'2026-07-01',cv:'Kandidat i tidig fas — ansökan mottagen, ännu inga bedömningar.',phone:'070-000 00 00',gdpr:'2027-07-01',tl:[['2026-07-01','Ansökan mottagen']],sc:[],fb:[]};}
+let mkPrev='kandidater';
+function openCand(name){
+  const c=CAND[name]||genCand(name);
+  const cur=document.querySelector('.mk-screen.on');if(cur&&cur.id!=='mk-detail')mkPrev=cur.id.replace('mk-','');
+  document.getElementById('det-av').textContent=initials(name);
+  document.getElementById('det-name').textContent=name;
+  document.getElementById('det-meta').textContent=c.role+' · ansökte '+c.applied;
+  document.getElementById('det-chips').innerHTML='<span class="mk-tag">'+c.src+'</span><span class="mk-chip2">'+c.stage+'</span>'+(c.score?'<span class="mk-score">★ '+c.score+'</span>':'');
+  document.getElementById('det-oversikt').innerHTML=
+    '<div style="font-size:10px;line-height:1.55">'+c.cv+'</div>'+
+    '<div class="mk-contact">✉ '+slug(name)+'@mail.se · ☎ '+c.phone+'</div>'+
+    '<span class="mk-chip2">🔒 GDPR-samtycke t.o.m. '+c.gdpr+'</span>'+
+    '<div class="mk-sublab">Tidslinje — full spårbarhet</div>'+
+    '<div class="mk-tl">'+c.tl.map(t=>'<div class="mk-tl-item"><div class="tt">'+t[0]+'</div>'+t[1]+'</div>').join('')+'</div>';
+  document.getElementById('det-bedom').innerHTML=c.sc.length?c.sc.map(s=>
+    '<div class="mk-sc" style="margin-bottom:8px"><div style="font-size:10px;font-weight:700;margin-bottom:6px">'+s.t+' <span style="color:var(--muted2);font-weight:400">· '+s.by+'</span></div>'+
+    s.rows.map(r=>'<div class="mk-sc-row"><span class="scn">'+r[0]+'</span>'+dots(r[1])+'</div>').join('')+
+    '<div class="mk-quote">”'+s.q+'”</div></div>').join(''):'<div style="font-size:10px;color:var(--muted2)">Inga bedömningar ännu — kandidaten är tidigt i processen.</div>';
+  document.getElementById('det-fb').innerHTML=c.fb.length?c.fb.map(f=>
+    '<div class="mk-src-card" style="display:block;padding:9px 12px"><div style="font-size:10.5px;font-weight:700">'+f[0]+'</div><div style="font-size:9.5px;color:var(--muted)">'+f[1]+'</div></div>').join(''):'<div style="font-size:10px;color:var(--muted2)">Ingen feedback ännu — kopplas hit så snart chefen svarat.</div>';
+  document.getElementById('det-dok').innerHTML=['CV_'+name.replace(/\s+/g,'_')+'.pdf','Personligt_brev.pdf'].map(d=>
+    '<div class="mk-doc"><div class="dh">📄 '+d+' <button class="mk-dlbtn">Ladda ner</button></div><div class="dl" style="width:60%"></div><div class="dl" style="width:85%"></div><div class="dl"></div><div class="dl" style="width:70%"></div></div>').join('');
+  document.querySelectorAll('#mk-detail .mk-tab').forEach((t,i)=>t.classList.toggle('on',i===0));
+  document.querySelectorAll('#mk-detail .mk-tabpane').forEach((p,i)=>p.classList.toggle('on',i===0));
+  document.querySelectorAll('.mk-screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById('mk-detail').classList.add('on');
+}
+function detTab(el){const t=el.dataset.t;document.querySelectorAll('#mk-detail .mk-tab').forEach(x=>x.classList.remove('on'));el.classList.add('on');document.querySelectorAll('#mk-detail .mk-tabpane').forEach(p=>p.classList.remove('on'));document.getElementById('det-'+t).classList.add('on');}
+function mkBack(){document.querySelectorAll('.mk-screen').forEach(s=>s.classList.remove('on'));document.getElementById('mk-'+mkPrev).classList.add('on');}
+
+// ---- hero mockup — draggable kanban cards + click-to-open ----
+let dragCard=null,suppressClick=false;
 function wireDrag(){
   document.querySelectorAll('.mk-card.mk-drag').forEach(c=>{
-    if(c.dataset.w)return;c.dataset.w='1';c.draggable=true;
+    if(c.dataset.w)return;c.dataset.w='1';c.draggable=true;c.style.cursor='pointer';
     c.addEventListener('dragstart',()=>{dragCard=c;setTimeout(()=>c.style.opacity='.35',0)});
-    c.addEventListener('dragend',()=>{c.style.opacity='';dragCard=null});
+    c.addEventListener('dragend',()=>{c.style.opacity='';dragCard=null;suppressClick=true;setTimeout(()=>suppressClick=false,220)});
+    c.addEventListener('click',()=>{if(suppressClick)return;const n=c.querySelector('.n');if(n)openCand(n.textContent.trim())});
   });
   document.querySelectorAll('.mock-main .mk-col').forEach(col=>{
     if(col.dataset.w)return;col.dataset.w='1';
